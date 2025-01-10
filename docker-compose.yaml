@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  mySQL:
+    image: mysql:8.4.3
+    container_name: mySQL_DB
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: cats_crud
+      MYSQL_USER: qbixmex
+      MYSQL_PASSWORD: root
+    volumes:
+      - ./mysql:/var/lib/mysql
+    ports:
+      - "3307:3306"
