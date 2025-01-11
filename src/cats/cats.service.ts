@@ -17,7 +17,6 @@ export class CatsService {
   ) {}
 
   async create(createCatDto: CreateCatDto) {
-
     const breed = await this.breedRepository.findOneBy({
       name: createCatDto.breed
     });
@@ -37,12 +36,21 @@ export class CatsService {
       name: cat.name,
       age: cat.age,
       breed: cat.breed.name,
+      createdAt: cat.createdAt,
+      updatedAt: cat.updatedAt,
     };
   }
 
   async findAll() {
     const cats = await this.catRepository.find({
-      select: ['id', 'name', 'age', 'breed'],
+      select: {
+        id: true,
+        name: true,
+        age: true,
+        breed: { name: true },
+        createdAt: true,
+        updatedAt: true,
+      },
     });
 
     const output = cats.map((cat) => ({
@@ -50,6 +58,8 @@ export class CatsService {
       name: cat.name,
       age: cat.age,
       breed: cat.breed ? cat.breed.name: 'Not Provided',
+      createdAt: cat.createdAt,
+      updatedAt: cat.updatedAt,
     }));
 
     return output;
@@ -58,7 +68,14 @@ export class CatsService {
   async findOne(id: string) {
     const cat = await this.catRepository.findOne({
       where: { id },
-      select: ['id', 'name', 'age', 'breed'],
+      select: {
+        id: true,
+        name: true,
+        age: true,
+        breed: { name: true },
+        createdAt: true,
+        updatedAt: true,
+      },
     });
 
     return {
@@ -66,6 +83,8 @@ export class CatsService {
       name: cat.name,
       age: cat.age,
       breed: cat.breed ? cat.breed.name: 'Not Provided',
+      createdAt: cat.createdAt,
+      updatedAt: cat.updatedAt,
     };
   }
 
@@ -94,13 +113,11 @@ export class CatsService {
       throw new BadRequestException(`Cannot update the cat: ${cat.name}`);
     }
 
-    const updatedCat = await this.catRepository.findOneBy({ id });
+    const updatedCat = await this.findOne(id);
 
     return {
-      id: updatedCat.id,
-      name: updatedCat.name,
-      age: updatedCat.age,
-      breed: updatedCat.breed ? updatedCat.breed.name: 'Not Provided',
+      message: "Cat updated successfully",
+      cat: updatedCat,
     };
   }
 
