@@ -1,10 +1,12 @@
 import { Breed } from "../../breeds/entities/breed.entity";
 import {
   Column,
+  CreateDateColumn,
   DeleteDateColumn,
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
   
 } from "typeorm";
 
@@ -25,6 +27,12 @@ export class Cat {
     { eager: true }
   )
   breed: Breed;
+
+  @CreateDateColumn()
+  createdAt: Date;
+  
+  @UpdateDateColumn()
+  updatedAt: Date;
 
   @DeleteDateColumn()
   deletedAt: Date;
