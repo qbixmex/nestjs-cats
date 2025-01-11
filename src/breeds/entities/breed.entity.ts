@@ -1,5 +1,5 @@
 import { Cat } from "../../cats/entities/cat.entity";
-import { Column, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
 export class Breed {
@@ -8,6 +8,12 @@ export class Breed {
 
     @Column({ type: "varchar", length: 100 })
     name: string;
+
+    @CreateDateColumn()
+    createdAt: Date;
+
+    @UpdateDateColumn()
+    updatedAt: Date;
 
     @DeleteDateColumn()
     deletedAt: Date;
