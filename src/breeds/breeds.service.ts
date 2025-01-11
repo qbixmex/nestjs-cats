@@ -16,14 +16,19 @@ export class BreedsService {
     const breed = await this.breedRepository.save(createBreedDto);
 
     return {
-      id: breed.id,
-      name: breed.name,
+      message: "Breed created successfully",
+      breed: {
+        id: breed.id,
+        name: breed.name,
+        createdAt: breed.createdAt,
+        updatedAt: breed.updatedAt,
+      }
     };
   }
 
   async findAll() {
     const breeds = await this.breedRepository.find({
-      select: ['id', 'name'],
+      select: ['id', 'name', 'createdAt', 'updatedAt'],
     });
 
     return breeds;
@@ -32,7 +37,7 @@ export class BreedsService {
   async findOne(id: string) {
     const breed = await this.breedRepository.findOne({
       where: { id },
-      select: ['id', 'name'],
+      select: ['id', 'name', 'createdAt', 'updatedAt'],
     });
 
     return breed;
@@ -45,7 +50,12 @@ export class BreedsService {
       throw NotFoundException;
     }
 
-    return await this.findOne(id);
+    const updatedBreed = await this.findOne(id);
+
+    return {
+      message: "Breed updated successfully",
+      breed: updatedBreed,
+    };
   }
 
   async remove(id: string) {
