@@ -44,7 +44,10 @@ export class BreedsService {
   }
 
   async update(id: string, updateBreedDto: UpdateBreedDto) {
-    const { affected } = await this.breedRepository.update(id, updateBreedDto);
+    const { affected } = await this.breedRepository.update(id, {
+      ...updateBreedDto,
+      updatedAt: new Date(),
+    });
 
     if (!affected) {
       throw NotFoundException;
