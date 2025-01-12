@@ -5,13 +5,14 @@ import {
   HttpCode,
   HttpStatus,
   Post,
-  UseGuards,
   Req
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import RegisterUserDto from './dto/register.dto';
 import LoginUserDto from './dto/login.dto';
-import { AuthGuard } from './guard/auth.guard';
+import { type RequestWithUser } from './interfaces/request.interface';
+import Role from './enums/role.enum';
+import Auth from './decorators/auth.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -31,26 +32,8 @@ export class AuthController {
   }
 
   @Get('profile')
-  @UseGuards(AuthGuard)
-  profile(@Req() request: Request & { user: {
-    name: string;
-    email: string;
-    iat: number;
-    exp: number;
-  }}) {
-    return {
-      name: request.user.name,
-      email: request.user.email,
-      /*
-        The iat (issued at) and exp (expiration),
-        fields in a JWT are typically represented in Unix time,
-        which is the number of seconds since January 1, 1970 (the Unix epoch).
-        JavaScript's Date object, however, expects the time in milliseconds
-        since the Unix epoch. Therefore, you need to multiply the Unix time by 1000
-        to convert it from seconds to milliseconds."
-      */
-      expeditedAt: new Date(request.user.iat * 1000).toISOString(),
-      expiresAt: new Date(request.user.exp * 1000).toISOString(),
-    };
+  @Auth(Role.ADMIN)
+  profile(@Req() request: RequestWithUser) {
+    return this.authService.profile(request.user);
   }
 }

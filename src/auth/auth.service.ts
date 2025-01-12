@@ -4,17 +4,17 @@ import { compareSync } from 'bcryptjs';
 import { UsersService } from '../users/users.service';
 import RegisterUserDto from './dto/register.dto';
 import LoginUserDto from './dto/login.dto';
+import { type UserPayload } from './interfaces/request.interface';
 
 @Injectable()
 export class AuthService {
-
   constructor(
-    private readonly userRepository: UsersService,
+    private readonly userService: UsersService,
     private readonly jwtService: JwtService,
   ) {}
 
   async register({ email, password }: RegisterUserDto) {
-    const userExists = await this.userRepository.findOneByEmail(email);
+    const userExists = await this.userService.findOneByEmail(email);
 
     if (userExists) {
       throw new BadRequestException(
@@ -22,11 +22,11 @@ export class AuthService {
       );
     }
 
-    return await this.userRepository.create({ email, password });
+    return await this.userService.create({ email, password });
   }
 
   async login({ email, password }: LoginUserDto) {
-    const user = await this.userRepository.findOneByEmail(email);
+    const user = await this.userService.findOneByEmail(email);
 
     if (!user) {
       throw new UnauthorizedException('Bad credentials, email or password is wrong !');
@@ -39,8 +39,8 @@ export class AuthService {
     }
 
     const payload = {
-      name: user.name,
       email: user.email,
+      role: user.role,
     };
 
     const token = await this.jwtService.signAsync(payload);
@@ -51,8 +51,14 @@ export class AuthService {
         id: user.id,
         name: user.name,
         email: user.email,
+        role: user.role,
       },
       token,
     };
+  }
+
+  async profile({ email }: UserPayload) {
+    const user = await this.userService.findOneByEmail(email);
+    return user;
   }
 }
