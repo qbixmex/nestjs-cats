@@ -4,6 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
+import { hashSync } from 'bcryptjs';
 
 @Injectable()
 export class UsersService {
@@ -13,10 +14,12 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
-    const user = await this.userRepository.save(createUserDto);
+    const hashedPassword = hashSync(createUserDto.password);
 
-    // Remove password from the response
-    delete user.password;
+    const user = await this.userRepository.save({
+      ...createUserDto,
+      password: hashedPassword,
+    });
 
     return {
       message: 'User created successfully',
@@ -73,17 +76,11 @@ export class UsersService {
         id: true,
         name: true,
         email: true,
-        role: true,
-        createdAt: true,
-        updatedAt: true,
+        password: true,
       }
     });
 
-    if (!user) {
-      throw new BadRequestException(`User not found with email: ${email}`);
-    }
-
-    return user;
+    return user ? user : null;
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
