@@ -4,7 +4,7 @@ import { Request } from 'express';
 import jwtConstants from '../constants/jwt.constants';
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+class AuthGuard implements CanActivate {
 
   constructor(private readonly jwtService: JwtService) {}
 
@@ -23,8 +23,10 @@ export class AuthGuard implements CanActivate {
         token,
         { secret: jwtConstants.secret }
       );
-
-      request.user = payload;
+      request.user = {
+        email: payload.email,
+        role: payload.role,
+      };
     } catch {
       throw new UnauthorizedException();
     }
@@ -37,3 +39,5 @@ export class AuthGuard implements CanActivate {
     return type === 'Bearer' ? token : undefined;
   }
 }
+
+export default AuthGuard;
