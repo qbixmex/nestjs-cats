@@ -106,7 +106,8 @@ export class CatsService {
     const { affected } = await this.catRepository.update(id, {
       ...cat,
       ...updateCatDto,
-      breed
+      breed,
+      updatedAt: new Date(),
     });
 
     if (!affected) {
