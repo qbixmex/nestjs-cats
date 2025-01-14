@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { hashSync } from 'bcryptjs';
+import Role from '../common/enums/role.enum';
 
 @Injectable()
 export class UsersService {
@@ -18,6 +19,7 @@ export class UsersService {
 
     const user = await this.userRepository.save({
       ...createUserDto,
+      role: createUserDto.role === 'admin' ? Role.ADMIN : Role.USER,
       password: hashedPassword,
     });
 
@@ -70,18 +72,16 @@ export class UsersService {
   }
 
   async findOneByEmail(email: string) {
+    const user = await this.userRepository.findOneBy({ email });
+    return user ?? null;
+  }
+
+  async findOneByEmailWithPassword(email: string) {
     const user = await this.userRepository.findOne({
       where: { email },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        password: true,
-        role: true,
-      }
+      select: ['id', 'name', 'email', 'password', 'role'],
     });
-
-    return user ? user : null;
+    return user ?? null;
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
@@ -94,6 +94,7 @@ export class UsersService {
     await this.userRepository.update(id, {
       ...userFound,
       ...updateUserDto,
+      role: updateUserDto.role === 'admin' ? Role.ADMIN : Role.USER,
       updatedAt: new Date(),
     });
 
