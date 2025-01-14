@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import Role from '../auth/enums/role.enum';
+import Role from '../common/enums/role.enum';
 import Auth from '../auth/decorators/auth.decorator';
 
 @Controller('users')
@@ -16,20 +16,26 @@ export class UsersController {
   }
 
   @Get()
-  @Auth(Role.ADMIN)
+  @Auth(Role.USER)
   findAll() {
     return this.usersService.findAll();
   }
 
   @Get(':id')
-  @Auth(Role.ADMIN)
+  @Auth(Role.USER)
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
   }
 
   @Get(':email')
+  @Auth(Role.USER)
   findOneByEmail(@Param('email') email: string) {
     return this.usersService.findOneByEmail(email);
+  }
+
+  @Get(':email')
+  findOneByEmailWithPassword(@Param('email') email: string) {
+    return this.usersService.findOneByEmailWithPassword(email);
   }
 
   @Patch(':id')

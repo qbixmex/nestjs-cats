@@ -1,3 +1,4 @@
+import Role from "../../common/enums/role.enum";
 import {
   Column,
   CreateDateColumn,
@@ -24,14 +25,16 @@ export class User {
   })
   email: string;
 
-  @Column({ length: 255 })
+  @Column({ nullable: false, select: false })
   password: string;
 
   @Column({
-    default: 'user',
-    nullable: true
+    type: 'enum',
+    enum: Role,
+    default: Role.USER,
+    nullable: true,
   })
-  role: string;
+  role: Role;
 
   @CreateDateColumn()
   createdAt: Date;
