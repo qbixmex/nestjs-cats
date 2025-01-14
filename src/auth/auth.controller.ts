@@ -5,14 +5,14 @@ import {
   HttpCode,
   HttpStatus,
   Post,
-  Req
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import RegisterUserDto from './dto/register.dto';
 import LoginUserDto from './dto/login.dto';
-import { type RequestWithUser } from './interfaces/request.interface';
-import Role from './enums/role.enum';
+import Role from '../common/enums/role.enum';
 import Auth from './decorators/auth.decorator';
+import ActiveUser from '../common/decorators/active-user.decorator';
+import type ActiveUserInterface from '../common/interfaces/user-active.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -32,8 +32,8 @@ export class AuthController {
   }
 
   @Get('profile')
-  @Auth(Role.ADMIN)
-  profile(@Req() request: RequestWithUser) {
-    return this.authService.profile(request.user);
+  @Auth(Role.USER)
+  profile(@ActiveUser() user: ActiveUserInterface) {
+    return this.authService.profile(user);
   }
 }

@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { CatsService } from './cats.service';
 import { CreateCatDto } from './dto/create-cat.dto';
 import { UpdateCatDto } from './dto/update-cat.dto';
-import Role from '../auth/enums/role.enum';
+import Role from '../common/enums/role.enum';
 import Auth from '../auth/decorators/auth.decorator';
 
 @Controller('cats')
@@ -16,13 +16,13 @@ export class CatsController {
   }
 
   @Get()
-  @Auth(Role.ADMIN)
+  @Auth(Role.USER)
   findAll() {
     return this.catsService.findAll();
   }
 
   @Get(':id')
-  @Auth(Role.ADMIN)
+  @Auth(Role.USER)
   findOne(@Param('id') id: string) {
     return this.catsService.findOne(id);
   }
