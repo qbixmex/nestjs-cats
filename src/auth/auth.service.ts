@@ -4,7 +4,7 @@ import { compareSync } from 'bcryptjs';
 import { UsersService } from '../users/users.service';
 import RegisterUserDto from './dto/register.dto';
 import LoginUserDto from './dto/login.dto';
-import { type UserPayload } from './interfaces/request.interface';
+import type ActiveUserInterface from '../common/interfaces/user-active.interface';
 
 @Injectable()
 export class AuthService {
@@ -26,7 +26,7 @@ export class AuthService {
   }
 
   async login({ email, password }: LoginUserDto) {
-    const user = await this.userService.findOneByEmail(email);
+    const user = await this.userService.findOneByEmailWithPassword(email);
 
     if (!user) {
       throw new UnauthorizedException('Bad credentials, email or password is wrong !');
@@ -43,7 +43,8 @@ export class AuthService {
       role: user.role,
     };
 
-    const token = await this.jwtService.signAsync(payload);
+    const token = await this.jwtService
+      .signAsync(payload, { expiresIn: '1h' });
 
     return {
       message: 'User logged in successfully !',
@@ -57,8 +58,9 @@ export class AuthService {
     };
   }
 
-  async profile({ email }: UserPayload) {
+  async profile({ email }: ActiveUserInterface) {
     const user = await this.userService.findOneByEmail(email);
+    delete user.deletedAt;
     return user;
   }
 }

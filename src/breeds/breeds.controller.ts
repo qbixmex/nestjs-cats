@@ -3,7 +3,7 @@ import { BreedsService } from './breeds.service';
 import { CreateBreedDto } from './dto/create-breed.dto';
 import { UpdateBreedDto } from './dto/update-breed.dto';
 import Auth from '../auth/decorators/auth.decorator';
-import Role from '../auth/enums/role.enum';
+import Role from '../common/enums/role.enum';
 
 @Controller('breeds')
 export class BreedsController {
@@ -16,13 +16,13 @@ export class BreedsController {
   }
 
   @Get()
-  @Auth(Role.ADMIN)
+  @Auth(Role.USER)
   findAll() {
     return this.breedsService.findAll();
   }
 
   @Get(':id')
-  @Auth(Role.ADMIN)
+  @Auth(Role.USER)
   findOne(@Param('id') id: string) {
     return this.breedsService.findOne(id);
   }
