@@ -1,9 +1,11 @@
 import { Breed } from "../../breeds/entities/breed.entity";
+import { User } from '../../users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -21,13 +23,6 @@ export class Cat {
   @Column({ type: "int", width: 2 })
   age: number;
 
-  @ManyToOne(
-    () => Breed,
-    (breed) => breed.id,
-    { eager: true }
-  )
-  breed: Breed;
-
   @CreateDateColumn()
   createdAt: Date;
   
@@ -36,4 +31,21 @@ export class Cat {
 
   @DeleteDateColumn()
   deletedAt: Date;
+
+  @ManyToOne(
+    () => Breed,
+    (breed) => breed.id,
+    { eager: true }
+  )
+  breed: Breed;
+
+  @ManyToOne(() => User)
+  @JoinColumn({
+    name: "userEmail",
+    referencedColumnName: "email",
+  })
+  user: User;
+
+  @Column()
+  userEmail: string;
 }
