@@ -10,7 +10,7 @@ import { AuthModule } from './auth/auth.module';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
-      type: 'mysql',
+      type: 'postgres',
       host: process.env.DB_HOST,
       port: parseInt(process.env.DB_PORT),
       username: process.env.DB_USERNAME,
@@ -18,6 +18,12 @@ import { AuthModule } from './auth/auth.module';
       database: process.env.DB_NAME,
       autoLoadEntities: true,
       synchronize: true,
+      ssl: process.env.POSTGRES_SSL === "true",
+      extra: {
+        ssl: process.env.POSTGRES_SSL === "true"
+          ? { rejectUnauthorized: false }
+          : null,
+      }
     }),
     CatsModule,
     BreedsModule,
