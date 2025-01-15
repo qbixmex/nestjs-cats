@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { ApiBearerAuth, ApiCreatedResponse, ApiForbiddenResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { CatsService } from './cats.service';
 import { CreateCatDto } from './dto/create-cat.dto';
 import { UpdateCatDto } from './dto/update-cat.dto';
@@ -7,11 +8,16 @@ import Auth from '../auth/decorators/auth.decorator';
 import ActiveUser from '../common/decorators/active-user.decorator';
 import type ActiveUserInterface from '../common/interfaces/user-active.interface';
 
+@ApiTags('cats')
+@ApiBearerAuth()
+@ApiUnauthorizedResponse({ description: 'Your not authorized to access to this resource !' })
 @Controller('cats')
 export class CatsController {
   constructor(private readonly catsService: CatsService) {}
 
   @Post()
+  @ApiCreatedResponse({ description: 'The cat has been successfully created !' })
+  @ApiForbiddenResponse({ description: 'Your cannot create this resource !' })
   @Auth(Role.ADMIN)
   create(
     @Body() createCatDto: CreateCatDto,
