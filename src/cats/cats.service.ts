@@ -130,7 +130,7 @@ export class CatsService {
     
     await this.catRepository.softDelete({
       id,
-      userEmail: (user.role === Role.ADMIN) ? undefined : user.email,
+      userEmail: user.email,
     });
 
     return {
